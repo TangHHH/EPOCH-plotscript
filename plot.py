@@ -1,12 +1,13 @@
 import sys, getopt
 import os, time
-from common import plot
+import plot_utils
 
 def usage():
     print('''
 Usage: python plot.py [-option value ...]
     -h,--help:         usage.
-    -i [value]: input sdf file.
+    -l,--list:         list keywords.
+    -f [value]: input sdf file.
     -k [value]: the item which will be ploted.
     -o [value]: output filename.
     -x,--xslice [value]: x slice.
@@ -27,12 +28,12 @@ def handle_slice(s):
 
 if __name__ == "__main__":
     starttime = time.time()
-    opts, args = getopt.getopt(sys.argv[1:], "hx:y:z:k:i:o:",['help','xslice=','yslice=','zslice=','vmax=','vmin='])
-    xslice,yslice,zslice,vmax,vmin = (slice(None),slice(None),slice(None),None,None)
+    opts, args = getopt.getopt(sys.argv[1:], "hlx:y:z:k:f:o:",['help','list','xslice=','yslice=','zslice=','vmax=','vmin='])
+    xslice,yslice,zslice,vmax,vmin,showlist = (slice(None),slice(None),slice(None),None,None,None)
     for op, value in opts:
         if op == "-o":
             output = value
-        elif op == "-i":
+        elif op == "-f":
             filename = value
         elif op == "-k":
             key = value
@@ -46,11 +47,17 @@ if __name__ == "__main__":
             vmax = float(value)
         elif op == '--vmin':
             vmin = float(value)
+        elif op in ('-l','--list'):
+            showlist = True
         elif op in ("-h","--help"):
             usage()
             sys.exit()
 
-    plot(filename,key,output,xslice=xslice,yslice=yslice,zslice=zslice,vmax=vmax,vmin=vmin)
-    
-    endtime = time.time()
+    if showlist:
+        keywords = plot_utils.get_keywords(filename)
+        for keyword in keywords:
+            print(keyword)
+    else:
+        plot_utils.plot(filename,key,output,xslice=xslice,yslice=yslice,zslice=zslice,vmax=vmax,vmin=vmin)
+        endtime = time.time()
 #    print("The program runs in %.2f seconds." % (endtime - starttime))

@@ -4,6 +4,10 @@ matplotlib.use('AGG')
 import matplotlib.pyplot as plt
 import numpy as np
 
+def get_keywords(filename):
+    sdfdata = sdf.read(filename)
+    return sdfdata.__dict__.keys()
+
 def plot(filename,key,output,xslice=slice(None),yslice=slice(None),zslice=slice(None),vmin=None,vmax=None):
     sdfdata = sdf.read(filename)
     data = sdfdata.__dict__[key]
